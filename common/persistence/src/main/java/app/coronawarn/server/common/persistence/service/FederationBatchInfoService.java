@@ -49,6 +49,12 @@ public class FederationBatchInfoService {
     logger.info(MARKET_BATCH_WITH_STATUS, statusValue);
   }
 
+  /**
+   * Returns all batch information entries with a given status.
+   *
+   * @param federationBatchStatus the status the batch information entries should have.
+   * @return the list of batch information entries with the given status.
+   */
   public List<FederationBatchInfo> findByStatus(FederationBatchStatus federationBatchStatus) {
     return federationBatchInfoRepository.findByStatus(federationBatchStatus.name());
   }
@@ -70,5 +76,18 @@ public class FederationBatchInfoService {
     int numberOfDeletions = federationBatchInfoRepository.countOlderThan(threshold);
     logger.info(DELETING_BATCH_INFOS_WITH_DATE_OLDER, numberOfDeletions, daysToRetain);
     federationBatchInfoRepository.deleteOlderThan(threshold);
+  }
+
+  /**
+   * Deletes all federation batch information entries which have a specific date.
+   *
+   * @param date The date for which the batch information entries should be deleted.
+   */
+  @Transactional
+  public void deleteForDate(LocalDate date) {
+    int numberOfDeletions = federationBatchInfoRepository.countForDate(date);
+    logger.info("Deleting {} batch info(s) for date {}.",
+        numberOfDeletions, date);
+    federationBatchInfoRepository.deleteForDate(date);
   }
 }
